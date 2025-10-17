@@ -24,6 +24,7 @@
         .p-4 { padding: 1rem; }
         .p-6 { padding: 1.5rem; }
         .p-8 { padding: 2rem; }
+        .p-12 { padding: 3rem; }
         .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
         .px-4 { padding-left: 1rem; padding-right: 1rem; }
         .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
@@ -37,6 +38,7 @@
         .mt-6 { margin-top: 1.5rem; }
         .mb-2 { margin-bottom: 0.5rem; }
         .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
         .mb-8 { margin-bottom: 2rem; }
         .mx-auto { margin-left: auto; margin-right: auto; }
         .flex { display: flex; }
@@ -63,23 +65,29 @@
         .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
         .text-2xl { font-size: 1.5rem; line-height: 2rem; }
         .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+        .text-6xl { font-size: 3.75rem; line-height: 1; }
         .font-medium { font-weight: 500; }
         .font-semibold { font-weight: 600; }
         .font-bold { font-weight: 700; }
         .text-center { text-align: center; }
         .text-white { color: white; }
+        .text-gray-400 { color: #9ca3af; }
         .text-gray-500 { color: #6b7280; }
         .text-gray-600 { color: #4b5563; }
         .text-gray-700 { color: #374151; }
         .text-gray-800 { color: #1f2937; }
         .text-gray-900 { color: #111827; }
         .text-purple-600 { color: #9333ea; }
+        .text-purple-700 { color: #7e22ce; }
         .text-red-600 { color: #dc2626; }
         .text-red-700 { color: #b91c1c; }
         .text-blue-700 { color: #1d4ed8; }
         .text-green-700 { color: #15803d; }
         .text-yellow-700 { color: #a16207; }
+        .text-orange-700 { color: #c2410c; }
         .bg-gray-50 { background-color: #f9fafb; }
+        .bg-gray-100 { background-color: #f3f4f6; }
+        .bg-gray-200 { background-color: #e5e7eb; }
         .bg-purple-100 { background-color: #f3e8ff; }
         .bg-purple-600 { background-color: #9333ea; }
         .bg-red-100 { background-color: #fee2e2; }
@@ -88,12 +96,12 @@
         .bg-green-100 { background-color: #dcfce7; }
         .bg-yellow-100 { background-color: #fef3c7; }
         .bg-orange-100 { background-color: #ffedd5; }
-        .text-orange-700 { color: #c2410c; }
         .border { border-width: 1px; }
         .border-b { border-bottom-width: 1px; }
         .border-l-4 { border-left-width: 4px; }
         .border-gray-300 { border-color: #d1d5db; }
         .uppercase { text-transform: uppercase; }
+        .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .overflow-hidden { overflow: hidden; }
         .overflow-x-auto { overflow-x: auto; }
         .whitespace-nowrap { white-space: nowrap; }
@@ -146,6 +154,8 @@
             stats: { totalUsers: 0, activePrayers: 0, completedPrayers: 0, totalPoints: 0 },
             users: [],
             prayers: [],
+            reports: [],
+            reportFilter: 'pending',
             showDeleteModal: false,
             deleteTarget: null
         };
@@ -185,7 +195,7 @@
 
         function handleLogout() {
             localStorage.removeItem('admin_token');
-            setState({ token: '', isAuthenticated: false, users: [], prayers: [] });
+            setState({ token: '', isAuthenticated: false, users: [], prayers: [], reports: [] });
         }
 
         async function fetchDashboardData() {
@@ -196,20 +206,23 @@
                     'Authorization': `Bearer ${state.token}`
                 };
 
-                const [usersRes, prayersRes, statsRes] = await Promise.all([
+                const [usersRes, prayersRes, statsRes, reportsRes] = await Promise.all([
                     fetch(`${API_BASE_URL}/admin/users`, { headers }),
                     fetch(`${API_BASE_URL}/admin/prayers`, { headers }),
-                    fetch(`${API_BASE_URL}/admin/stats`, { headers })
+                    fetch(`${API_BASE_URL}/admin/stats`, { headers }),
+                    fetch(`${API_BASE_URL}/admin/reports?status=${state.reportFilter}`, { headers })
                 ]);
 
                 const usersData = await usersRes.json();
                 const prayersData = await prayersRes.json();
                 const statsData = await statsRes.json();
+                const reportsData = await reportsRes.json();
 
-                if (usersData.success && prayersData.success && statsData.success) {
+                if (usersData.success && prayersData.success && statsData.success && reportsData.success) {
                     setState({
                         users: usersData.users || [],
                         prayers: prayersData.prayers || [],
+                        reports: reportsData.reports || [],
                         stats: statsData.stats || state.stats,
                         loading: false
                     });
@@ -235,16 +248,14 @@
         }
 
         async function executeDelete() {
-            const { type, id, name } = state.deleteTarget;
+            const { type, id } = state.deleteTarget;
             setState({ loading: true, showDeleteModal: false });
 
             try {
                 const endpoint = type === 'user' ? `/admin/users/${id}` : `/admin/prayers/${id}`;
                 const response = await fetch(`${API_BASE_URL}${endpoint}`, {
                     method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${state.token}`
-                    }
+                    headers: { 'Authorization': `Bearer ${state.token}` }
                 });
 
                 const data = await response.json();
@@ -263,18 +274,14 @@
         }
 
         async function toggleUserActive(userId, userName, isActive) {
-            if (!confirm(`${userName} kullanıcısını ${isActive ? 'engellemek' : 'aktifleştirmek'} istediğinize emin misiniz?`)) {
-                return;
-            }
+            if (!confirm(`${userName} kullanıcısını ${isActive ? 'engellemek' : 'aktifleştirmek'} istediğinize emin misiniz?`)) return;
 
             setState({ loading: true });
 
             try {
                 const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/toggle-active`, {
                     method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${state.token}`
-                    }
+                    headers: { 'Authorization': `Bearer ${state.token}` }
                 });
 
                 const data = await response.json();
@@ -288,6 +295,55 @@
                 }
             } catch (error) {
                 alert('Hata: ' + error.message);
+                setState({ loading: false });
+            }
+        }
+
+        async function updateReportStatus(reportId, status) {
+            setState({ loading: true });
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/reports/${reportId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${state.token}`
+                    },
+                    body: JSON.stringify({ status })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(data.message);
+                    fetchDashboardData();
+                } else {
+                    alert(data.message || 'İşlem başarısız');
+                    setState({ loading: false });
+                }
+            } catch (error) {
+                alert('Hata: ' + error.message);
+                setState({ loading: false });
+            }
+        }
+
+        async function changeReportFilter(filter) {
+            setState({ reportFilter: filter, loading: true });
+            
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${state.token}`
+                };
+
+                const response = await fetch(`${API_BASE_URL}/admin/reports?status=${filter}`, { headers });
+                const data = await response.json();
+
+                if (data.success) {
+                    setState({ reports: data.reports || [], loading: false });
+                }
+            } catch (error) {
+                console.error('Report filter error:', error);
                 setState({ loading: false });
             }
         }
@@ -309,31 +365,15 @@
                         <div class="space-y-6">
                             <div>
                                 <label class="text-sm font-medium text-gray-700 mb-2" style="display: block;">Kullanıcı Adı</label>
-                                <input
-                                    type="text"
-                                    id="loginUsername"
-                                    value="${state.loginUsername}"
-                                    class="px-4 py-3 rounded-lg"
-                                    placeholder="admin"
-                                />
+                                <input type="text" id="loginUsername" value="${state.loginUsername}" class="px-4 py-3 rounded-lg" placeholder="admin" />
                             </div>
                             
                             <div>
                                 <label class="text-sm font-medium text-gray-700 mb-2" style="display: block;">Şifre</label>
-                                <input
-                                    type="password"
-                                    id="loginPassword"
-                                    value="${state.loginPassword}"
-                                    class="px-4 py-3 rounded-lg"
-                                    placeholder="••••••••"
-                                />
+                                <input type="password" id="loginPassword" value="${state.loginPassword}" class="px-4 py-3 rounded-lg" placeholder="••••••••" />
                             </div>
                             
-                            <button
-                                onclick="handleLogin()"
-                                ${state.loading ? 'disabled' : ''}
-                                class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold transition"
-                            >
+                            <button onclick="handleLogin()" ${state.loading ? 'disabled' : ''} class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold transition">
                                 ${state.loading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
                             </button>
                         </div>
@@ -362,12 +402,8 @@
                             <span class="text-red-600">Bu işlem geri alınamaz!</span>
                         </p>
                         <div class="flex space-x-3">
-                            <button onclick="cancelDelete()" class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg">
-                                İptal
-                            </button>
-                            <button onclick="executeDelete()" class="flex-1 btn-danger">
-                                Evet, Sil
-                            </button>
+                            <button onclick="cancelDelete()" class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg">İptal</button>
+                            <button onclick="executeDelete()" class="flex-1 btn-danger">Evet, Sil</button>
                         </div>
                     </div>
                 </div>
@@ -385,57 +421,37 @@
                                     <p class="text-gray-600 text-sm font-medium">Toplam Kullanıcı</p>
                                     <p class="text-3xl font-bold text-gray-800 mt-2">${stats.total_users || 0}</p>
                                 </div>
-                                <div class="p-3 rounded-full" style="background-color: rgba(139, 92, 246, 0.1);">
-                                    <svg class="icon" style="color: #8b5cf6;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                                    </svg>
-                                </div>
+                                <div class="p-3 rounded-full" style="background-color: rgba(139, 92, 246, 0.1);"><svg class="icon" style="color: #8b5cf6;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
                             </div>
                         </div>
-                        
                         <div class="stat-card" style="border-left-color: #3b82f6;">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-gray-600 text-sm font-medium">Aktif Dualar</p>
                                     <p class="text-3xl font-bold text-gray-800 mt-2">${stats.active_prayers || 0}</p>
                                 </div>
-                                <div class="p-3 rounded-full" style="background-color: rgba(59, 130, 246, 0.1);">
-                                    <svg class="icon" style="color: #3b82f6;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
+                                <div class="p-3 rounded-full" style="background-color: rgba(59, 130, 246, 0.1);"><svg class="icon" style="color: #3b82f6;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
                             </div>
                         </div>
-                        
                         <div class="stat-card" style="border-left-color: #10b981;">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-gray-600 text-sm font-medium">Tamamlanan Dualar</p>
                                     <p class="text-3xl font-bold text-gray-800 mt-2">${stats.completed_prayers || 0}</p>
                                 </div>
-                                <div class="p-3 rounded-full" style="background-color: rgba(16, 185, 129, 0.1);">
-                                    <svg class="icon" style="color: #10b981;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
+                                <div class="p-3 rounded-full" style="background-color: rgba(16, 185, 129, 0.1);"><svg class="icon" style="color: #10b981;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
                             </div>
                         </div>
-                        
                         <div class="stat-card" style="border-left-color: #f59e0b;">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-gray-600 text-sm font-medium">Toplam Puan</p>
                                     <p class="text-3xl font-bold text-gray-800 mt-2">${(stats.total_points || 0).toLocaleString()}</p>
                                 </div>
-                                <div class="p-3 rounded-full" style="background-color: rgba(245, 158, 11, 0.1);">
-                                    <svg class="icon" style="color: #f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
-                                    </svg>
-                                </div>
+                                <div class="p-3 rounded-full" style="background-color: rgba(245, 158, 11, 0.1);"><svg class="icon" style="color: #f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg></div>
                             </div>
                         </div>
                     </div>
-
                     <div class="bg-white rounded-xl shadow p-6">
                         <h3 class="text-lg font-semibold text-gray-800 mb-4">Son Dua İstekleri</h3>
                         <div class="space-y-3">
@@ -579,6 +595,144 @@
             `;
         }
 
+        function renderReports() {
+            const reasonLabels = {
+                'inappropriate': { text: 'Uygunsuz İçerik', color: 'bg-red-100 text-red-700', icon: '⚠️' },
+                'spam': { text: 'Spam/Gereksiz', color: 'bg-orange-100 text-orange-700', icon: '🚫' },
+                'offensive': { text: 'Hakaret/Küfür', color: 'bg-red-100 text-red-700', icon: '😡' },
+                'other': { text: 'Diğer', color: 'bg-gray-100 text-gray-700', icon: '📝' }
+            };
+
+            const statusLabels = {
+                'pending': { text: 'Bekliyor', color: 'bg-yellow-100 text-yellow-700' },
+                'reviewed': { text: 'İncelendi', color: 'bg-blue-100 text-blue-700' },
+                'resolved': { text: 'Çözüldü', color: 'bg-green-100 text-green-700' }
+            };
+
+            return `
+                <div class="bg-white rounded-xl shadow overflow-hidden">
+                    <div class="p-6 border-b">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-800">Kullanıcı Şikayetleri (${state.reports.length})</h3>
+                            
+                            <div class="flex space-x-2">
+                                <button 
+                                    onclick="changeReportFilter('pending')"
+                                    class="px-3 py-1 rounded-lg text-sm font-medium transition ${state.reportFilter === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600'}"
+                                >
+                                    ⏳ Bekleyenler
+                                </button>
+                                <button 
+                                    onclick="changeReportFilter('reviewed')"
+                                    class="px-3 py-1 rounded-lg text-sm font-medium transition ${state.reportFilter === 'reviewed' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}"
+                                >
+                                    👀 İncelenenler
+                                </button>
+                                <button 
+                                    onclick="changeReportFilter('resolved')"
+                                    class="px-3 py-1 rounded-lg text-sm font-medium transition ${state.reportFilter === 'resolved' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}"
+                                >
+                                    ✅ Çözülmüşler
+                                </button>
+                                <button 
+                                    onclick="changeReportFilter('all')"
+                                    class="px-3 py-1 rounded-lg text-sm font-medium transition ${state.reportFilter === 'all' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'}"
+                                >
+                                    📋 Tümü
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${state.reports.length === 0 ? `
+                        <div class="p-12 text-center">
+                            <div class="text-6xl mb-4">📭</div>
+                            <p class="text-gray-600">Şikayet bulunmuyor</p>
+                        </div>
+                    ` : `
+                        <div class="overflow-x-auto">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th class="text-xs font-medium text-gray-600 uppercase">Şikayet Eden</th>
+                                        <th class="text-xs font-medium text-gray-600 uppercase">Şikayet Edilen</th>
+                                        <th class="text-xs font-medium text-gray-600 uppercase">Sebep</th>
+                                        <th class="text-xs font-medium text-gray-600 uppercase">Dua İsteği</th>
+                                        <th class="text-xs font-medium text-gray-600 uppercase">Açıklama</th>
+                                        <th class="text-xs font-medium text-gray-600 uppercase">Tarih</th>
+                                        <th class="text-xs font-medium text-gray-600 uppercase">Durum</th>
+                                        <th class="text-xs font-medium text-gray-600 uppercase">İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${state.reports.map(report => {
+                                        const reason = reasonLabels[report.reason] || reasonLabels['other'];
+                                        const status = statusLabels[report.status] || statusLabels['pending'];
+                                        const date = new Date(report.created_at).toLocaleDateString('tr-TR', { 
+                                            day: 'numeric', 
+                                            month: 'short', 
+                                            hour: '2-digit', 
+                                            minute: '2-digit' 
+                                        });
+                                        
+                                        return `
+                                            <tr>
+                                                <td>
+                                                    <div class="font-medium text-gray-900">${report.reporter_name}</div>
+                                                </td>
+                                                <td>
+                                                    <div class="font-medium text-red-600">${report.reported_user_name}</div>
+                                                </td>
+                                                <td>
+                                                    <span class="badge ${reason.color}">
+                                                        ${reason.icon} ${reason.text}
+                                                    </span>
+                                                </td>
+                                                <td class="text-gray-600" style="max-width: 200px;">
+                                                    ${report.prayer_title ? `<div class="text-sm truncate">${report.prayer_title}</div>` : '<span class="text-gray-400">-</span>'}
+                                                </td>
+                                                <td class="text-gray-600" style="max-width: 250px;">
+                                                    ${report.description ? `<div class="text-sm" style="line-height: 1.4;">${report.description}</div>` : '<span class="text-gray-400">Açıklama yok</span>'}
+                                                </td>
+                                                <td class="text-sm text-gray-600 whitespace-nowrap">${date}</td>
+                                                <td>
+                                                    <span class="badge ${status.color}">
+                                                        ${status.text}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div class="flex space-x-2">
+                                                        ${report.status === 'pending' ? `
+                                                            <button 
+                                                                onclick="updateReportStatus('${report.id}', 'reviewed')"
+                                                                class="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium"
+                                                                title="İncelendi Olarak İşaretle"
+                                                            >
+                                                                👀 İncelendi
+                                                            </button>
+                                                        ` : ''}
+                                                        ${report.status !== 'resolved' ? `
+                                                            <button 
+                                                                onclick="updateReportStatus('${report.id}', 'resolved')"
+                                                                class="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium"
+                                                                title="Çözüldü Olarak İşaretle"
+                                                            >
+                                                                ✅ Çözüldü
+                                                            </button>
+                                                        ` : ''}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
         function renderMain() {
             return `
                 ${renderDeleteModal()}
@@ -635,6 +789,9 @@
                                 <button onclick="setState({ activeTab: 'prayers' })" class="tab ${state.activeTab === 'prayers' ? 'active' : ''}">
                                     🙏 Dua İstekleri
                                 </button>
+                                <button onclick="setState({ activeTab: 'reports' })" class="tab ${state.activeTab === 'reports' ? 'active' : ''}">
+                                    🚨 Şikayetler
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -643,6 +800,7 @@
                         ${state.activeTab === 'dashboard' ? renderDashboard() : ''}
                         ${state.activeTab === 'users' ? renderUsers() : ''}
                         ${state.activeTab === 'prayers' ? renderPrayers() : ''}
+                        ${state.activeTab === 'reports' ? renderReports() : ''}
                     </div>
                 </div>
             `;
@@ -673,7 +831,6 @@
             }
         }
 
-        // Initial render
         if (state.token) {
             state.isAuthenticated = true;
             fetchDashboardData();
