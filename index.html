@@ -170,7 +170,7 @@
     
     // Yöntem 1: Query string ile GET request (en basit)
     try {
-        const url = `${API_BASE_URL}/api/auth/admin-login?username=${encodeURIComponent(state.loginUsername)}&password=${encodeURIComponent(state.loginPassword)}`;
+        const url = `${API_BASE_URL}/auth/admin-login?username=${encodeURIComponent(state.loginUsername)}&password=${encodeURIComponent(state.loginPassword)}`;
         
         const response = await fetch(url, {
             method: 'GET',
