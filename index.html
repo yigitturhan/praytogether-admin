@@ -166,32 +166,35 @@
         }
 
         async function handleLogin() {
-            setState({ loading: true });
-            try {
-                const response = await fetch(`${API_BASE_URL}/admin/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        username: state.loginUsername,
-                        password: state.loginPassword
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success && data.token) {
-                    localStorage.setItem('admin_token', data.token);
-                    setState({ token: data.token, isAuthenticated: true, loading: false });
-                    fetchDashboardData();
-                } else {
-                    alert(data.message || 'Giriş başarısız');
-                    setState({ loading: false });
-                }
-            } catch (error) {
-                alert('Giriş hatası: ' + error.message);
-                setState({ loading: false });
+    setState({ loading: true });
+    
+    // Yöntem 1: Query string ile GET request (en basit)
+    try {
+        const url = `${API_BASE_URL}/api/auth/admin-login?username=${encodeURIComponent(state.loginUsername)}&password=${encodeURIComponent(state.loginPassword)}`;
+        
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: { 
+                'Accept': 'application/json'
             }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.token) {
+            localStorage.setItem('admin_token', data.token);
+            setState({ token: data.token, isAuthenticated: true, loading: false });
+            fetchDashboardData();
+        } else {
+            alert(data.message || 'Giriş başarısız');
+            setState({ loading: false });
         }
+    } catch (error) {
+        console.error('Login error:', error);
+        alert('Giriş hatası: ' + error.message);
+        setState({ loading: false });
+    }
+}
 
         function handleLogout() {
             localStorage.removeItem('admin_token');
