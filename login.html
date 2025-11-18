@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrayTogether Admin - Giriş</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="min-h-screen bg-gradient flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+            <div class="text-center mb-8">
+                <div class="bg-purple-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="icon text-white" style="width: 2.5rem; height: 2.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">PrayTogether Admin</h1>
+                <p class="text-gray-600">Yönetim paneline giriş yapın</p>
+            </div>
+
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label for="username" class="text-sm font-medium text-gray-700 mb-2" style="display: block;">
+                        Kullanıcı Adı
+                    </label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        required
+                        class="w-full px-4 py-3 rounded-lg"
+                        placeholder="Kullanıcı adınızı girin"
+                        autocomplete="username"
+                    >
+                </div>
+
+                <div>
+                    <label for="password" class="text-sm font-medium text-gray-700 mb-2" style="display: block;">
+                        Şifre
+                    </label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        required
+                        class="w-full px-4 py-3 rounded-lg"
+                        placeholder="Şifrenizi girin"
+                        autocomplete="current-password"
+                    >
+                </div>
+
+                <div id="errorMessage" class="hidden p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+                </div>
+
+                <button
+                    type="submit"
+                    id="loginButton"
+                    class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold transition"
+                    style="font-size: 1rem;"
+                >
+                    Giriş Yap
+                </button>
+            </form>
+
+            <div class="mt-6 text-center text-sm text-gray-500">
+                <p>© 2024 PrayTogether. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        // Check if already logged in
+        if (Auth.isAuthenticated()) {
+            window.location.href = 'index.html';
+        }
+
+        const loginForm = document.getElementById('loginForm');
+        const loginButton = document.getElementById('loginButton');
+        const errorMessage = document.getElementById('errorMessage');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                showError('Lütfen tüm alanları doldurun!');
+                return;
+            }
+
+            // Disable button and show loading
+            loginButton.disabled = true;
+            loginButton.textContent = 'Giriş yapılıyor...';
+            hideError();
+
+            try {
+                const result = await Auth.login(username, password);
+                
+                if (result.success) {
+                    // Redirect to dashboard
+                    window.location.href = 'index.html';
+                } else {
+                    showError(result.message || 'Giriş başarısız!');
+                    loginButton.disabled = false;
+                    loginButton.textContent = 'Giriş Yap';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('Bağlantı hatası! Lütfen tekrar deneyin.');
+                loginButton.disabled = false;
+                loginButton.textContent = 'Giriş Yap';
+            }
+        });
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.remove('hidden');
+        }
+
+        function hideError() {
+            errorMessage.classList.add('hidden');
+        }
+
+        // Enter key support for password field
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                loginForm.dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>

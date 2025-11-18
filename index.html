@@ -4,844 +4,165 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PrayTogether Admin Panel</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: #f3f4f6;
-        }
-        .container { max-width: 1280px; margin: 0 auto; padding: 0 1rem; }
-        .bg-gradient { background: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%); }
-        .bg-white { background: white; }
-        .shadow { box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); }
-        .shadow-xl { box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
-        .rounded-lg { border-radius: 0.75rem; }
-        .rounded-xl { border-radius: 1rem; }
-        .rounded-2xl { border-radius: 1.25rem; }
-        .rounded-full { border-radius: 9999px; }
-        .p-2 { padding: 0.5rem; }
-        .p-3 { padding: 0.75rem; }
-        .p-4 { padding: 1rem; }
-        .p-6 { padding: 1.5rem; }
-        .p-8 { padding: 2rem; }
-        .p-12 { padding: 3rem; }
-        .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
-        .px-4 { padding-left: 1rem; padding-right: 1rem; }
-        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
-        .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
-        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
-        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
-        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
-        .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
-        .mt-2 { margin-top: 0.5rem; }
-        .mt-4 { margin-top: 1rem; }
-        .mt-6 { margin-top: 1.5rem; }
-        .mb-2 { margin-bottom: 0.5rem; }
-        .mb-4 { margin-bottom: 1rem; }
-        .mb-6 { margin-bottom: 1.5rem; }
-        .mb-8 { margin-bottom: 2rem; }
-        .mx-auto { margin-left: auto; margin-right: auto; }
-        .flex { display: flex; }
-        .flex-1 { flex: 1 1 0%; }
-        .items-center { align-items: center; }
-        .justify-center { justify-content: center; }
-        .justify-between { justify-content: space-between; }
-        .space-x-2 > * + * { margin-left: 0.5rem; }
-        .space-x-3 > * + * { margin-left: 0.75rem; }
-        .space-x-4 > * + * { margin-left: 1rem; }
-        .space-y-3 > * + * { margin-top: 0.75rem; }
-        .space-y-6 > * + * { margin-top: 1.5rem; }
-        .space-y-8 > * + * { margin-top: 2rem; }
-        .grid { display: grid; }
-        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
-        .gap-6 { gap: 1.5rem; }
-        .min-h-screen { min-height: 100vh; }
-        .w-full { width: 100%; }
-        .max-w-md { max-width: 28rem; }
-        .h-20 { height: 5rem; }
-        .w-20 { width: 5rem; }
-        .text-xs { font-size: 0.75rem; line-height: 1rem; }
-        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
-        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
-        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
-        .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
-        .text-6xl { font-size: 3.75rem; line-height: 1; }
-        .font-medium { font-weight: 500; }
-        .font-semibold { font-weight: 600; }
-        .font-bold { font-weight: 700; }
-        .text-center { text-align: center; }
-        .text-white { color: white; }
-        .text-gray-400 { color: #9ca3af; }
-        .text-gray-500 { color: #6b7280; }
-        .text-gray-600 { color: #4b5563; }
-        .text-gray-700 { color: #374151; }
-        .text-gray-800 { color: #1f2937; }
-        .text-gray-900 { color: #111827; }
-        .text-purple-600 { color: #9333ea; }
-        .text-purple-700 { color: #7e22ce; }
-        .text-red-600 { color: #dc2626; }
-        .text-red-700 { color: #b91c1c; }
-        .text-blue-700 { color: #1d4ed8; }
-        .text-green-700 { color: #15803d; }
-        .text-yellow-700 { color: #a16207; }
-        .text-orange-700 { color: #c2410c; }
-        .bg-gray-50 { background-color: #f9fafb; }
-        .bg-gray-100 { background-color: #f3f4f6; }
-        .bg-gray-200 { background-color: #e5e7eb; }
-        .bg-purple-100 { background-color: #f3e8ff; }
-        .bg-purple-600 { background-color: #9333ea; }
-        .bg-red-100 { background-color: #fee2e2; }
-        .bg-red-600 { background-color: #dc2626; }
-        .bg-blue-100 { background-color: #dbeafe; }
-        .bg-green-100 { background-color: #dcfce7; }
-        .bg-yellow-100 { background-color: #fef3c7; }
-        .bg-orange-100 { background-color: #ffedd5; }
-        .border { border-width: 1px; }
-        .border-b { border-bottom-width: 1px; }
-        .border-l-4 { border-left-width: 4px; }
-        .border-gray-300 { border-color: #d1d5db; }
-        .uppercase { text-transform: uppercase; }
-        .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .overflow-hidden { overflow: hidden; }
-        .overflow-x-auto { overflow-x: auto; }
-        .whitespace-nowrap { white-space: nowrap; }
-        .cursor-pointer { cursor: pointer; }
-        .transition { transition-property: all; transition-duration: 150ms; }
-        button { border: none; cursor: pointer; outline: none; font-family: inherit; }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
-        button:not(:disabled):hover { opacity: 0.9; }
-        input { border: 1px solid #d1d5db; outline: none; font-family: inherit; width: 100%; }
-        input:focus { border-color: #9333ea; box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1); }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 1rem 1.5rem; text-align: left; }
-        thead { background-color: #f9fafb; }
-        tbody tr { border-bottom: 1px solid #e5e7eb; }
-        tbody tr:hover { background-color: #f9fafb; }
-        .tab { padding: 1rem 0.5rem; border-bottom: 2px solid transparent; background: none; color: #4b5563; font-weight: 500; font-size: 0.875rem; transition: all 150ms; }
-        .tab:hover { color: #9333ea; }
-        .tab.active { border-bottom-color: #9333ea; color: #9333ea; }
-        .stat-card { background: white; border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); border-left: 4px solid; }
-        .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
-        .progress-bar { height: 0.5rem; background: #e5e7eb; border-radius: 9999px; overflow: hidden; width: 6rem; }
-        .progress-fill { height: 100%; background: #10b981; transition: width 300ms; }
-        .icon { width: 1.5rem; height: 1.5rem; }
-        .icon-sm { width: 1rem; height: 1rem; }
-        .btn-danger { background: #dc2626; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; }
-        .btn-danger:hover:not(:disabled) { background: #b91c1c; }
-        .btn-warning { background: #f59e0b; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; }
-        .btn-warning:hover:not(:disabled) { background: #d97706; }
-        @media (min-width: 768px) { .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-        @media (min-width: 1024px) { .lg\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-        .animate-spin { animation: spin 1s linear infinite; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-        .modal-content { background: white; padding: 2rem; border-radius: 1rem; max-width: 28rem; width: 90%; }
-    </style>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <div id="app"></div>
 
+    <!-- Core Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/utils.js"></script>
+
+    <!-- Component Scripts -->
+    <script src="js/components/header.js"></script>
+    <script src="js/components/tabs.js"></script>
+    <script src="js/components/modal.js"></script>
+    <script src="js/components/stats.js"></script>
+
+    <!-- Page Scripts -->
+    <script src="js/pages/dashboard.js"></script>
+    <script src="js/pages/users.js"></script>
+    <script src="js/pages/prayers.js"></script>
+    <script src="js/pages/reports.js"></script>
+
+    <!-- Main App Script -->
     <script>
-        const API_BASE_URL = 'https://web-production-5cd1.up.railway.app/api';
-        
-        let state = {
-            token: localStorage.getItem('admin_token') || '',
-            isAuthenticated: false,
-            activeTab: 'dashboard',
-            loading: false,
-            loginUsername: '',
-            loginPassword: '',
-            stats: { totalUsers: 0, activePrayers: 0, completedPrayers: 0, totalPoints: 0 },
-            users: [],
-            prayers: [],
-            reports: [],
-            reportFilter: 'pending',
-            showDeleteModal: false,
-            deleteTarget: null
+        // Main App
+        const App = {
+            init() {
+                // Check authentication
+                if (!Auth.requireAuth()) {
+                    return;
+                }
+
+                // Subscribe to state changes
+                State.subscribe(() => {
+                    this.render();
+                });
+
+                // Load initial data
+                this.loadData();
+            },
+
+            async loadData() {
+                State.setLoading(true);
+                
+                try {
+                    // Load dashboard data
+                    const dashboardData = await API.getDashboard();
+                    if (dashboardData && dashboardData.success) {
+                        State.setDashboard(dashboardData.data);
+                    }
+
+                    // Load other data based on active tab
+                    const activeTab = State.get().activeTab;
+                    
+                    if (activeTab === 'users') {
+                        await this.loadUsers();
+                    } else if (activeTab === 'prayers') {
+                        await this.loadPrayers();
+                    } else if (activeTab === 'reports') {
+                        await this.loadReports();
+                    }
+                } catch (error) {
+                    console.error('Load data error:', error);
+                } finally {
+                    State.setLoading(false);
+                }
+            },
+
+            async loadUsers() {
+                try {
+                    const usersData = await API.getUsers();
+                    if (usersData && usersData.success) {
+                        State.setUsers(usersData.users);
+                    }
+                } catch (error) {
+                    console.error('Load users error:', error);
+                }
+            },
+
+            async loadPrayers() {
+                try {
+                    const prayersData = await API.getPrayers();
+                    if (prayersData && prayersData.success) {
+                        State.setPrayers(prayersData.prayers);
+                    }
+                } catch (error) {
+                    console.error('Load prayers error:', error);
+                }
+            },
+
+            async loadReports() {
+                try {
+                    const reportsData = await API.getReports();
+                    if (reportsData && reportsData.success) {
+                        State.setReports(reportsData.reports);
+                    }
+                } catch (error) {
+                    console.error('Load reports error:', error);
+                }
+            },
+
+            async refreshData() {
+                await this.loadData();
+            },
+
+            render() {
+                const state = State.get();
+                const app = document.getElementById('app');
+                
+                app.innerHTML = `
+                    ${Modal.render()}
+                    <div class="min-h-screen bg-gray-100">
+                        ${Header.render()}
+                        ${Tabs.render()}
+                        
+                        <div class="container py-8">
+                            ${this.renderCurrentPage()}
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderCurrentPage() {
+                const state = State.get();
+                
+                switch (state.activeTab) {
+                    case 'dashboard':
+                        return DashboardPage.render();
+                    case 'users':
+                        return UsersPage.render();
+                    case 'prayers':
+                        return PrayersPage.render();
+                    case 'reports':
+                        return ReportsPage.render();
+                    default:
+                        return '<div class="text-center py-8 text-gray-500">Sayfa bulunamadı</div>';
+                }
+            }
         };
 
-        function setState(newState) {
-            state = { ...state, ...newState };
-            render();
-        }
-
-        async function handleLogin() {
-    setState({ loading: true });
-    
-    // Yöntem 1: Query string ile GET request (en basit)
-    try {
-        const url = `${API_BASE_URL}/auth/admin-login?username=${encodeURIComponent(state.loginUsername)}&password=${encodeURIComponent(state.loginPassword)}`;
-        
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: { 
-                'Accept': 'application/json'
-            }
-        });
-        
-        const data = await response.json();
-        
-        if (data.success && data.token) {
-            localStorage.setItem('admin_token', data.token);
-            setState({ token: data.token, isAuthenticated: true, loading: false });
-            fetchDashboardData();
-        } else {
-            alert(data.message || 'Giriş başarısız');
-            setState({ loading: false });
-        }
-    } catch (error) {
-        console.error('Login error:', error);
-        alert('Giriş hatası: ' + error.message);
-        setState({ loading: false });
-    }
-}
-
-        function handleLogout() {
-            localStorage.removeItem('admin_token');
-            setState({ token: '', isAuthenticated: false, users: [], prayers: [], reports: [] });
-        }
-
-        async function fetchDashboardData() {
-            setState({ loading: true });
-            try {
-                const headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${state.token}`
-                };
-
-                const [usersRes, prayersRes, statsRes, reportsRes] = await Promise.all([
-                    fetch(`${API_BASE_URL}/admin/users`, { headers }),
-                    fetch(`${API_BASE_URL}/admin/prayers`, { headers }),
-                    fetch(`${API_BASE_URL}/admin/stats`, { headers }),
-                    fetch(`${API_BASE_URL}/admin/reports?status=${state.reportFilter}`, { headers })
-                ]);
-
-                const usersData = await usersRes.json();
-                const prayersData = await prayersRes.json();
-                const statsData = await statsRes.json();
-                const reportsData = await reportsRes.json();
-
-                if (usersData.success && prayersData.success && statsData.success && reportsData.success) {
-                    setState({
-                        users: usersData.users || [],
-                        prayers: prayersData.prayers || [],
-                        reports: reportsData.reports || [],
-                        stats: statsData.stats || state.stats,
-                        loading: false
-                    });
-                } else {
-                    throw new Error('Veri yüklenemedi');
-                }
-            } catch (error) {
-                console.error('Data fetch error:', error);
-                alert('Veriler yüklenirken hata oluştu');
-                setState({ loading: false });
-            }
-        }
-
-        function confirmDelete(type, id, name) {
-            setState({ 
-                showDeleteModal: true, 
-                deleteTarget: { type, id, name } 
-            });
-        }
-
-        function cancelDelete() {
-            setState({ showDeleteModal: false, deleteTarget: null });
-        }
-
-        async function executeDelete() {
-            const { type, id } = state.deleteTarget;
-            setState({ loading: true, showDeleteModal: false });
-
-            try {
-                const endpoint = type === 'user' ? `/admin/users/${id}` : `/admin/prayers/${id}`;
-                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${state.token}` }
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    alert(data.message);
-                    fetchDashboardData();
-                } else {
-                    alert(data.message || 'Silme işlemi başarısız');
-                    setState({ loading: false });
-                }
-            } catch (error) {
-                alert('Hata: ' + error.message);
-                setState({ loading: false });
-            }
-        }
-
-        async function toggleUserActive(userId, userName, isActive) {
-            if (!confirm(`${userName} kullanıcısını ${isActive ? 'engellemek' : 'aktifleştirmek'} istediğinize emin misiniz?`)) return;
-
-            setState({ loading: true });
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/toggle-active`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${state.token}` }
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    alert(data.message);
-                    fetchDashboardData();
-                } else {
-                    alert(data.message || 'İşlem başarısız');
-                    setState({ loading: false });
-                }
-            } catch (error) {
-                alert('Hata: ' + error.message);
-                setState({ loading: false });
-            }
-        }
-
-        async function updateReportStatus(reportId, status) {
-            setState({ loading: true });
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/admin/reports/${reportId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${state.token}`
-                    },
-                    body: JSON.stringify({ status })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    alert(data.message);
-                    fetchDashboardData();
-                } else {
-                    alert(data.message || 'İşlem başarısız');
-                    setState({ loading: false });
-                }
-            } catch (error) {
-                alert('Hata: ' + error.message);
-                setState({ loading: false });
-            }
-        }
-
-        async function changeReportFilter(filter) {
-            setState({ reportFilter: filter, loading: true });
+        // Override State.setActiveTab to load data when tab changes
+        const originalSetActiveTab = State.setActiveTab.bind(State);
+        State.setActiveTab = function(tab) {
+            originalSetActiveTab(tab);
             
-            try {
-                const headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${state.token}`
-                };
-
-                const response = await fetch(`${API_BASE_URL}/admin/reports?status=${filter}`, { headers });
-                const data = await response.json();
-
-                if (data.success) {
-                    setState({ reports: data.reports || [], loading: false });
-                }
-            } catch (error) {
-                console.error('Report filter error:', error);
-                setState({ loading: false });
+            // Load data for the new tab
+            if (tab === 'users') {
+                App.loadUsers();
+            } else if (tab === 'prayers') {
+                App.loadPrayers();
+            } else if (tab === 'reports') {
+                App.loadReports();
             }
-        }
+        };
 
-        function renderLogin() {
-            return `
-                <div class="min-h-screen bg-gradient flex items-center justify-center p-4">
-                    <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
-                        <div class="text-center mb-8">
-                            <div class="bg-purple-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                                </svg>
-                            </div>
-                            <h1 class="text-3xl font-bold text-gray-800">Admin Panel</h1>
-                            <p class="text-gray-600 mt-2">PrayTogether Yönetim</p>
-                        </div>
-                        
-                        <div class="space-y-6">
-                            <div>
-                                <label class="text-sm font-medium text-gray-700 mb-2" style="display: block;">Kullanıcı Adı</label>
-                                <input type="text" id="loginUsername" value="${state.loginUsername}" class="px-4 py-3 rounded-lg" placeholder="admin" />
-                            </div>
-                            
-                            <div>
-                                <label class="text-sm font-medium text-gray-700 mb-2" style="display: block;">Şifre</label>
-                                <input type="password" id="loginPassword" value="${state.loginPassword}" class="px-4 py-3 rounded-lg" placeholder="••••••••" />
-                            </div>
-                            
-                            <button onclick="handleLogin()" ${state.loading ? 'disabled' : ''} class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold transition">
-                                ${state.loading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
-                            </button>
-                        </div>
-                        
-                        <div class="mt-6 text-center text-sm text-gray-500">
-                            <p>🔒 Güvenli admin girişi</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderDeleteModal() {
-            if (!state.showDeleteModal || !state.deleteTarget) return '';
-            
-            const { type, name } = state.deleteTarget;
-            const typeName = type === 'user' ? 'kullanıcıyı' : 'dua isteğini';
-            
-            return `
-                <div class="modal" onclick="if(event.target === this) cancelDelete()">
-                    <div class="modal-content">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Silme Onayı</h3>
-                        <p class="text-gray-600 mb-6">
-                            <strong>"${name}"</strong> ${typeName} silmek istediğinize emin misiniz?
-                            <br><br>
-                            <span class="text-red-600">Bu işlem geri alınamaz!</span>
-                        </p>
-                        <div class="flex space-x-3">
-                            <button onclick="cancelDelete()" class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg">İptal</button>
-                            <button onclick="executeDelete()" class="flex-1 btn-danger">Evet, Sil</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderDashboard() {
-            const { stats, prayers } = state;
-            return `
-                <div class="space-y-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="stat-card" style="border-left-color: #8b5cf6;">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-gray-600 text-sm font-medium">Toplam Kullanıcı</p>
-                                    <p class="text-3xl font-bold text-gray-800 mt-2">${stats.total_users || 0}</p>
-                                </div>
-                                <div class="p-3 rounded-full" style="background-color: rgba(139, 92, 246, 0.1);"><svg class="icon" style="color: #8b5cf6;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
-                            </div>
-                        </div>
-                        <div class="stat-card" style="border-left-color: #3b82f6;">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-gray-600 text-sm font-medium">Aktif Dualar</p>
-                                    <p class="text-3xl font-bold text-gray-800 mt-2">${stats.active_prayers || 0}</p>
-                                </div>
-                                <div class="p-3 rounded-full" style="background-color: rgba(59, 130, 246, 0.1);"><svg class="icon" style="color: #3b82f6;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
-                            </div>
-                        </div>
-                        <div class="stat-card" style="border-left-color: #10b981;">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-gray-600 text-sm font-medium">Tamamlanan Dualar</p>
-                                    <p class="text-3xl font-bold text-gray-800 mt-2">${stats.completed_prayers || 0}</p>
-                                </div>
-                                <div class="p-3 rounded-full" style="background-color: rgba(16, 185, 129, 0.1);"><svg class="icon" style="color: #10b981;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
-                            </div>
-                        </div>
-                        <div class="stat-card" style="border-left-color: #f59e0b;">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-gray-600 text-sm font-medium">Toplam Puan</p>
-                                    <p class="text-3xl font-bold text-gray-800 mt-2">${(stats.total_points || 0).toLocaleString()}</p>
-                                </div>
-                                <div class="p-3 rounded-full" style="background-color: rgba(245, 158, 11, 0.1);"><svg class="icon" style="color: #f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-xl shadow p-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Son Dua İstekleri</h3>
-                        <div class="space-y-3">
-                            ${prayers.slice(0, 5).map(prayer => `
-                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                    <div class="flex-1">
-                                        <h4 class="font-semibold text-gray-800">${prayer.title}</h4>
-                                        <p class="text-sm text-gray-600">${prayer.requester_name} • ${prayer.prayer_type}</p>
-                                    </div>
-                                    <div class="flex items-center space-x-4">
-                                        <div class="text-right">
-                                            <p class="text-sm font-medium text-gray-800">${prayer.prayer_completed_count}/${prayer.prayer_count}</p>
-                                            <p class="text-xs text-gray-600">Tamamlanma</p>
-                                        </div>
-                                        <span class="badge ${prayer.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">
-                                            ${prayer.status === 'completed' ? 'Tamamlandı' : 'Aktif'}
-                                        </span>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderUsers() {
-            return `
-                <div class="bg-white rounded-xl shadow overflow-hidden">
-                    <div class="p-6 border-b">
-                        <h3 class="text-lg font-semibold text-gray-800">Kullanıcı Listesi (${state.users.length})</h3>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th class="text-xs font-medium text-gray-600 uppercase">İsim</th>
-                                    <th class="text-xs font-medium text-gray-600 uppercase">Telefon</th>
-                                    <th class="text-xs font-medium text-gray-600 uppercase">Puan</th>
-                                    <th class="text-xs font-medium text-gray-600 uppercase">Tamamlanan</th>
-                                    <th class="text-xs font-medium text-gray-600 uppercase">Durum</th>
-                                    <th class="text-xs font-medium text-gray-600 uppercase">İşlemler</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${state.users.map(user => `
-                                    <tr>
-                                        <td><div class="font-medium text-gray-900">${user.name}</div></td>
-                                        <td class="text-gray-600">${user.phone}</td>
-                                        <td><span class="badge bg-purple-100 text-purple-600">${user.points}</span></td>
-                                        <td class="text-gray-600">${user.prayers_completed}</td>
-                                        <td>
-                                            <span class="badge ${user.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
-                                                ${user.is_active ? 'Aktif' : 'Engelli'}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div class="flex space-x-2">
-                                                <button 
-                                                    onclick="toggleUserActive('${user.id}', '${user.name}', ${user.is_active})"
-                                                    class="btn-warning"
-                                                    title="${user.is_active ? 'Engelle' : 'Aktifleştir'}"
-                                                >
-                                                    ${user.is_active ? '🚫 Engelle' : '✅ Aktifleştir'}
-                                                </button>
-                                                <button 
-                                                    onclick="confirmDelete('user', '${user.id}', '${user.name}')"
-                                                    class="btn-danger"
-                                                    title="Kullanıcıyı Sil"
-                                                >
-                                                    🗑️ Sil
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderPrayers() {
-            return `
-                <div class="bg-white rounded-xl shadow overflow-hidden">
-                    <div class="p-6 border-b">
-                        <h3 class="text-lg font-semibold text-gray-800">Dua İstekleri (${state.prayers.length})</h3>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th class="text-xs font-medium text-gray-600 uppercase">Başlık & Açıklama</th>
-                                    <th class="text-xs font-medium text-gray-600 uppercase">İsteyen</th>
-                                    <th class="text-xs font-medium text-gray-600 uppercase">Tür</th>
-                                    <th class="text-xs font-medium text-gray-600 uppercase">İlerleme</th>
-                                    <th class="text-xs font-medium text-gray-600 uppercase">Durum</th>
-                                    <th class="text-xs font-medium text-gray-600 uppercase">İşlemler</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${state.prayers.map(prayer => `
-                                    <tr>
-                                        <td style="max-width: 300px;">
-                                            <div class="font-medium text-gray-900 mb-1">${prayer.title}</div>
-                                            <div class="text-sm text-gray-600" style="line-height: 1.4;">
-                                                ${prayer.description ? prayer.description.substring(0, 100) + (prayer.description.length > 100 ? '...' : '') : 'Açıklama yok'}
-                                            </div>
-                                        </td>
-                                        <td class="text-gray-600">${prayer.requester_name}</td>
-                                        <td><span class="badge bg-blue-100 text-blue-700">${prayer.prayer_type}</span></td>
-                                        <td>
-                                            <div class="flex items-center space-x-2">
-                                                <div class="progress-bar">
-                                                    <div class="progress-fill" style="width: ${(prayer.prayer_completed_count / prayer.prayer_count) * 100}%;"></div>
-                                                </div>
-                                                <span class="text-sm text-gray-600">${prayer.prayer_completed_count}/${prayer.prayer_count}</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="badge ${prayer.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">
-                                                ${prayer.status === 'completed' ? 'Tamamlandı' : 'Aktif'}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <button 
-                                                onclick="confirmDelete('prayer', '${prayer.id}', '${prayer.title}')"
-                                                class="btn-danger"
-                                                title="Dua İsteğini Sil"
-                                            >
-                                                🗑️ Sil
-                                            </button>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderReports() {
-            const reasonLabels = {
-                'inappropriate': { text: 'Uygunsuz İçerik', color: 'bg-red-100 text-red-700', icon: '⚠️' },
-                'spam': { text: 'Spam/Gereksiz', color: 'bg-orange-100 text-orange-700', icon: '🚫' },
-                'offensive': { text: 'Hakaret/Küfür', color: 'bg-red-100 text-red-700', icon: '😡' },
-                'other': { text: 'Diğer', color: 'bg-gray-100 text-gray-700', icon: '📝' }
-            };
-
-            const statusLabels = {
-                'pending': { text: 'Bekliyor', color: 'bg-yellow-100 text-yellow-700' },
-                'reviewed': { text: 'İncelendi', color: 'bg-blue-100 text-blue-700' },
-                'resolved': { text: 'Çözüldü', color: 'bg-green-100 text-green-700' }
-            };
-
-            return `
-                <div class="bg-white rounded-xl shadow overflow-hidden">
-                    <div class="p-6 border-b">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-semibold text-gray-800">Kullanıcı Şikayetleri (${state.reports.length})</h3>
-                            
-                            <div class="flex space-x-2">
-                                <button 
-                                    onclick="changeReportFilter('pending')"
-                                    class="px-3 py-1 rounded-lg text-sm font-medium transition ${state.reportFilter === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600'}"
-                                >
-                                    ⏳ Bekleyenler
-                                </button>
-                                <button 
-                                    onclick="changeReportFilter('reviewed')"
-                                    class="px-3 py-1 rounded-lg text-sm font-medium transition ${state.reportFilter === 'reviewed' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}"
-                                >
-                                    👀 İncelenenler
-                                </button>
-                                <button 
-                                    onclick="changeReportFilter('resolved')"
-                                    class="px-3 py-1 rounded-lg text-sm font-medium transition ${state.reportFilter === 'resolved' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}"
-                                >
-                                    ✅ Çözülmüşler
-                                </button>
-                                <button 
-                                    onclick="changeReportFilter('all')"
-                                    class="px-3 py-1 rounded-lg text-sm font-medium transition ${state.reportFilter === 'all' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'}"
-                                >
-                                    📋 Tümü
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    ${state.reports.length === 0 ? `
-                        <div class="p-12 text-center">
-                            <div class="text-6xl mb-4">📭</div>
-                            <p class="text-gray-600">Şikayet bulunmuyor</p>
-                        </div>
-                    ` : `
-                        <div class="overflow-x-auto">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th class="text-xs font-medium text-gray-600 uppercase">Şikayet Eden</th>
-                                        <th class="text-xs font-medium text-gray-600 uppercase">Şikayet Edilen</th>
-                                        <th class="text-xs font-medium text-gray-600 uppercase">Sebep</th>
-                                        <th class="text-xs font-medium text-gray-600 uppercase">Dua İsteği</th>
-                                        <th class="text-xs font-medium text-gray-600 uppercase">Açıklama</th>
-                                        <th class="text-xs font-medium text-gray-600 uppercase">Tarih</th>
-                                        <th class="text-xs font-medium text-gray-600 uppercase">Durum</th>
-                                        <th class="text-xs font-medium text-gray-600 uppercase">İşlemler</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${state.reports.map(report => {
-                                        const reason = reasonLabels[report.reason] || reasonLabels['other'];
-                                        const status = statusLabels[report.status] || statusLabels['pending'];
-                                        const date = new Date(report.created_at).toLocaleDateString('tr-TR', { 
-                                            day: 'numeric', 
-                                            month: 'short', 
-                                            hour: '2-digit', 
-                                            minute: '2-digit' 
-                                        });
-                                        
-                                        return `
-                                            <tr>
-                                                <td>
-                                                    <div class="font-medium text-gray-900">${report.reporter_name}</div>
-                                                    <div class="text-sm text-gray-500">${report.reporter_phone || '-'}</div>
-                                                </td>
-                                                <td>
-                                                    <div class="font-medium text-red-600">${report.reported_user_name}</div>
-                                                    <div class="text-sm text-gray-500">${report.reported_user_phone || '-'}</div>
-                                                </td>
-                                                <td>
-                                                    <span class="badge ${reason.color}">
-                                                        ${reason.icon} ${reason.text}
-                                                    </span>
-                                                </td>
-                                                <td class="text-gray-600" style="max-width: 200px;">
-                                                    ${report.prayer_title ? `<div class="text-sm truncate">${report.prayer_title}</div>` : '<span class="text-gray-400">-</span>'}
-                                                </td>
-                                                <td class="text-gray-600" style="max-width: 250px;">
-                                                    ${report.description ? `<div class="text-sm" style="line-height: 1.4;">${report.description}</div>` : '<span class="text-gray-400">Açıklama yok</span>'}
-                                                </td>
-                                                <td class="text-sm text-gray-600 whitespace-nowrap">${date}</td>
-                                                <td>
-                                                    <span class="badge ${status.color}">
-                                                        ${status.text}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <div class="flex space-x-2">
-                                                        ${report.status === 'pending' ? `
-                                                            <button 
-                                                                onclick="updateReportStatus('${report.id}', 'reviewed')"
-                                                                class="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium"
-                                                                title="İncelendi Olarak İşaretle"
-                                                            >
-                                                                👀 İncelendi
-                                                            </button>
-                                                        ` : ''}
-                                                        ${report.status !== 'resolved' ? `
-                                                            <button 
-                                                                onclick="updateReportStatus('${report.id}', 'resolved')"
-                                                                class="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium"
-                                                                title="Çözüldü Olarak İşaretle"
-                                                            >
-                                                                ✅ Çözüldü
-                                                            </button>
-                                                        ` : ''}
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        `;
-                                    }).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    `}
-                </div>
-            `;
-        }
-
-        function renderMain() {
-            return `
-                ${renderDeleteModal()}
-                <div class="min-h-screen bg-gray-100">
-                    <div class="bg-white shadow">
-                        <div class="container">
-                            <div class="flex justify-between items-center py-4">
-                                <div class="flex items-center space-x-3">
-                                    <div class="bg-purple-600 p-2 rounded-lg text-white">
-                                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <h1 class="text-2xl font-bold text-gray-900">PrayTogether Admin</h1>
-                                        <p class="text-sm text-gray-600">Yönetim Paneli</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="flex items-center space-x-4">
-                                    <button
-                                        onclick="fetchDashboardData()"
-                                        ${state.loading ? 'disabled' : ''}
-                                        class="p-2 text-gray-600 transition"
-                                        style="background: none;"
-                                    >
-                                        <svg class="icon ${state.loading ? 'animate-spin' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                        </svg>
-                                    </button>
-                                    <button
-                                        onclick="handleLogout()"
-                                        class="flex items-center space-x-2 px-4 py-2 bg-red-100 text-red-700 rounded-lg transition"
-                                    >
-                                        <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                                        </svg>
-                                        <span>Çıkış</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border-b">
-                        <div class="container">
-                            <div class="flex" style="gap: 2rem;">
-                                <button onclick="setState({ activeTab: 'dashboard' })" class="tab ${state.activeTab === 'dashboard' ? 'active' : ''}">
-                                    📊 Dashboard
-                                </button>
-                                <button onclick="setState({ activeTab: 'users' })" class="tab ${state.activeTab === 'users' ? 'active' : ''}">
-                                    👥 Kullanıcılar
-                                </button>
-                                <button onclick="setState({ activeTab: 'prayers' })" class="tab ${state.activeTab === 'prayers' ? 'active' : ''}">
-                                    🙏 Dua İstekleri
-                                </button>
-                                <button onclick="setState({ activeTab: 'reports' })" class="tab ${state.activeTab === 'reports' ? 'active' : ''}">
-                                    🚨 Şikayetler
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="container py-8">
-                        ${state.activeTab === 'dashboard' ? renderDashboard() : ''}
-                        ${state.activeTab === 'users' ? renderUsers() : ''}
-                        ${state.activeTab === 'prayers' ? renderPrayers() : ''}
-                        ${state.activeTab === 'reports' ? renderReports() : ''}
-                    </div>
-                </div>
-            `;
-        }
-
-        function render() {
-            const app = document.getElementById('app');
-            if (!state.isAuthenticated) {
-                app.innerHTML = renderLogin();
-                
-                const usernameInput = document.getElementById('loginUsername');
-                const passwordInput = document.getElementById('loginPassword');
-                if (usernameInput) {
-                    usernameInput.addEventListener('input', (e) => {
-                        state.loginUsername = e.target.value;
-                    });
-                }
-                if (passwordInput) {
-                    passwordInput.addEventListener('input', (e) => {
-                        state.loginPassword = e.target.value;
-                    });
-                    passwordInput.addEventListener('keypress', (e) => {
-                        if (e.key === 'Enter') handleLogin();
-                    });
-                }
-            } else {
-                app.innerHTML = renderMain();
-            }
-        }
-
-        if (state.token) {
-            state.isAuthenticated = true;
-            fetchDashboardData();
-        } else {
-            render();
-        }
+        // Initialize app
+        App.init();
     </script>
 </body>
 </html>
