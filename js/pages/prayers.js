@@ -7,8 +7,8 @@ const PrayersPage = {
         if (!prayers || prayers.length === 0) {
             return `
                 <div class="bg-white rounded-xl shadow p-6">
-                    <h2 class="text-xl font-bold text-gray-900 mb-6">Dua İstekleri</h2>
-                    <div class="text-center py-8 text-gray-500">Dua isteği bulunamadı</div>
+                    <h2 class="text-xl font-bold text-gray-900 mb-6">Dua Ä°stekleri</h2>
+                    <div class="text-center py-8 text-gray-500">Dua isteÄŸi bulunamadÄ±</div>
                 </div>
             `;
         }
@@ -16,7 +16,7 @@ const PrayersPage = {
         return `
             <div class="bg-white rounded-xl shadow">
                 <div class="p-6 border-b">
-                    <h2 class="text-xl font-bold text-gray-900">Dua İstekleri (${prayers.length})</h2>
+                    <h2 class="text-xl font-bold text-gray-900">Dua Ä°stekleri (${prayers.length})</h2>
                 </div>
                 <div class="overflow-x-auto">
                     <table>
@@ -26,6 +26,7 @@ const PrayersPage = {
                                 <th>İsteyen</th>
                                 <th>Tür</th>
                                 <th>İlerleme</th>
+                                <th>Kalan</th>
                                 <th>Puan</th>
                                 <th>Durum</th>
                                 <th>Tarih</th>
@@ -60,7 +61,7 @@ const PrayersPage = {
                 </td>
                 <td>
                     <span class="text-sm font-medium text-gray-700">
-                        📿 ${prayer.prayer_type}
+                        ðŸ“¿ ${prayer.prayer_type}
                     </span>
                 </td>
                 <td>
@@ -72,6 +73,12 @@ const PrayersPage = {
                             ${prayer.prayer_completed_count}/${prayer.prayer_count}
                         </span>
                     </div>
+                </td>
+                <td>
+                    <span class="text-lg font-bold text-orange-600">
+                        ${prayer.remaining_count || (prayer.prayer_count - prayer.prayer_completed_count)}
+                    </span>
+                    <div class="text-xs text-gray-500">dua</div>
                 </td>
                 <td>
                     <div class="text-sm">
@@ -89,9 +96,9 @@ const PrayersPage = {
                     <button
                         onclick="State.showDeleteModal('prayer', '${prayer.id}', '${Utils.escapeHtml(prayer.title)}')"
                         class="btn-danger"
-                        title="Dua İsteğini Sil"
+                        title="Dua Ä°steÄŸini Sil"
                     >
-                        🗑️ Sil
+                        ðŸ—‘ï¸ Sil
                     </button>
                 </td>
             </tr>
