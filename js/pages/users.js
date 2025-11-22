@@ -55,7 +55,7 @@ const UsersPage = {
                 </td>
                 <td>
                     <span class="font-bold text-orange-600 text-lg">
-                        ${user.prayer_limits || 0}
+                        ${user.prayer_limits_remaining || 0}
                     </span>
                     <div class="text-xs text-gray-500">dua hakkı</div>
                 </td>
