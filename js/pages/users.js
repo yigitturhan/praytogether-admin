@@ -25,6 +25,7 @@ const UsersPage = {
                                 <th>İsim</th>
                                 <th>Telefon</th>
                                 <th>Puan</th>
+                                <th>Kalan Dua Hakkı</th>
                                 <th>Durum</th>
                                 <th>Kayıt Tarihi</th>
                                 <th>İstatistikler</th>
@@ -51,6 +52,12 @@ const UsersPage = {
                     <span class="font-semibold text-purple-600">
                         ${Utils.formatNumber(user.points)} ⭐
                     </span>
+                </td>
+                <td>
+                    <span class="font-bold text-orange-600 text-lg">
+                        ${user.prayer_limits || 0}
+                    </span>
+                    <div class="text-xs text-gray-500">dua hakkı</div>
                 </td>
                 <td>
                     <span class="badge ${user.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
