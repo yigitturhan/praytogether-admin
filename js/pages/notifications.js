@@ -24,12 +24,12 @@ const NotificationsPage = {
                             <input
                                 type="text"
                                 id="notificationTitle"
-                                placeholder="Örn: PrayTogether"
-                                value="PrayTogether"
+                                placeholder="Örn: Dua İle"
+                                value="Dua İle"
                                 class="w-full px-4 py-3 rounded-lg"
                                 maxlength="50"
                             >
-                            <p class="text-xs text-gray-500 mt-1">Boş bırakırsanız "PrayTogether" kullanılır</p>
+                            <p class="text-xs text-gray-500 mt-1">Boş bırakırsanız "Dua İle" kullanılır</p>
                         </div>
 
                         <div>
