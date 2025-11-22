@@ -52,20 +52,6 @@ const NotificationsPage = {
                             </div>
                         </div>
 
-                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-                            <div class="flex">
-                                <svg class="icon text-blue-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                <div>
-                                    <p class="text-sm text-blue-700 font-medium">Bilgi</p>
-                                    <p class="text-sm text-blue-600 mt-1">
-                                        Bu bildirim FCM token'ı olan tüm aktif kullanıcılara gönderilecektir.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
                         <div id="notificationError" class="hidden p-3 bg-red-100 text-red-700 rounded-lg text-sm"></div>
                         <div id="notificationSuccess" class="hidden p-3 bg-green-100 text-green-700 rounded-lg text-sm"></div>
 
@@ -78,16 +64,6 @@ const NotificationsPage = {
                             ${state.loading ? '📤 Gönderiliyor...' : '📤 Bildirim Gönder'}
                         </button>
                     </form>
-
-                    <div class="mt-8 p-4 bg-gray-50 rounded-lg">
-                        <h3 class="font-semibold text-gray-900 mb-2">💡 İpuçları</h3>
-                        <ul class="text-sm text-gray-600 space-y-1" style="list-style: disc; padding-left: 1.5rem;">
-                            <li>Kısa ve öz mesajlar daha etkilidir</li>
-                            <li>Önemli duyurular için kullanın</li>
-                            <li>Spam olarak algılanmaması için sık göndermekten kaçının</li>
-                            <li>Mesajınızı göndermeden önce kontrol edin</li>
-                        </ul>
-                    </div>
                 </div>
             </div>
         `;
@@ -135,8 +111,13 @@ const NotificationsPage = {
             return;
         }
 
-        // Confirm
-        if (!confirm(`Tüm kullanıcılara bu bildirimi göndermek istediğinizden emin misiniz?\n\n"${message}"`)) {
+        // Confirm with detailed dialog
+        const confirmMessage = `⚠️ TÜM KULLANICILARA BİLDİRİM GÖNDERİLECEK!\n\n` +
+            `Başlık: "${title}"\n\n` +
+            `Mesaj: "${message}"\n\n` +
+            `Bu bildirimi göndermek istediğinizden emin misiniz?`;
+        
+        if (!confirm(confirmMessage)) {
             return;
         }
 
