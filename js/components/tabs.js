@@ -31,6 +31,12 @@ const Tabs = {
                         >
                             🚨 Şikayetler
                         </button>
+                        <button 
+                            onclick="State.setActiveTab('notifications')" 
+                            class="tab ${state.activeTab === 'notifications' ? 'active' : ''}"
+                        >
+                            📢 Bildirimler
+                        </button>
                     </div>
                 </div>
             </div>

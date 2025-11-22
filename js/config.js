@@ -15,7 +15,8 @@ const CONFIG = {
         STATS: '/admin/stats',
         USERS: '/admin/users',
         PRAYERS: '/admin/prayers',
-        REPORTS: '/admin/reports'
+        REPORTS: '/admin/reports',
+        SEND_NOTIFICATION: '/admin/send-notification'
     },
     
     // Status Labels

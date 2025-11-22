@@ -27,6 +27,7 @@
     <script src="js/pages/users.js"></script>
     <script src="js/pages/prayers.js"></script>
     <script src="js/pages/reports.js"></script>
+    <script src="js/pages/notifications.js"></script>
 
     <!-- Main App Script -->
     <script>
@@ -126,6 +127,11 @@
                         </div>
                     </div>
                 `;
+
+                // Initialize notifications page if active
+                if (state.activeTab === 'notifications') {
+                    setTimeout(() => NotificationsPage.init(), 0);
+                }
             },
 
             renderCurrentPage() {
@@ -140,6 +146,8 @@
                         return PrayersPage.render();
                     case 'reports':
                         return ReportsPage.render();
+                    case 'notifications':
+                        return NotificationsPage.render();
                     default:
                         return '<div class="text-center py-8 text-gray-500">Sayfa bulunamadı</div>';
                 }

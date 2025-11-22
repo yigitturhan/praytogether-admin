@@ -100,6 +100,14 @@ const API = {
             method: 'PUT',
             body: JSON.stringify({ status })
         });
+    },
+
+    // Notifications
+    async sendNotification(title, message) {
+        return await this.request(CONFIG.ENDPOINTS.SEND_NOTIFICATION, {
+            method: 'POST',
+            body: JSON.stringify({ title, message })
+        });
     }
 };
 
