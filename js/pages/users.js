@@ -96,12 +96,32 @@ const UsersPage = {
 
     handleSearchName(value) {
         this.searchName = value;
-        State.notify();
+        this.updateTable();
     },
 
     handleSearchPhone(value) {
         this.searchPhone = value;
-        State.notify();
+        this.updateTable();
+    },
+
+    updateTable() {
+        const state = State.get();
+        const users = state.users;
+        const filteredUsers = this.filterUsers(users);
+        
+        // Update only the table body and count
+        const tbody = document.querySelector('table tbody');
+        const countElement = document.querySelector('.p-6.border-b h2');
+        
+        if (tbody) {
+            tbody.innerHTML = filteredUsers.length > 0 
+                ? filteredUsers.map(user => this.renderUserRow(user)).join('') 
+                : '<tr><td colspan="8" class="text-center py-8 text-gray-500">Arama sonucu bulunamadı</td></tr>';
+        }
+        
+        if (countElement) {
+            countElement.textContent = `Kullanıcılar (${filteredUsers.length}/${users.length})`;
+        }
     },
 
     renderUserRow(user) {
