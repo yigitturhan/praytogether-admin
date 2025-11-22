@@ -1,5 +1,8 @@
 // Users Page
 const UsersPage = {
+    searchName: '',
+    searchPhone: '',
+
     render() {
         const state = State.get();
         const users = state.users;
@@ -13,10 +16,45 @@ const UsersPage = {
             `;
         }
 
+        // Filter users based on search
+        const filteredUsers = this.filterUsers(users);
+
         return `
             <div class="bg-white rounded-xl shadow">
                 <div class="p-6 border-b">
-                    <h2 class="text-xl font-bold text-gray-900">Kullanıcılar (${users.length})</h2>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-900">Kullanıcılar (${filteredUsers.length}/${users.length})</h2>
+                    </div>
+                    
+                    <!-- Search Boxes -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-sm font-medium text-gray-700 mb-2" style="display: block;">
+                                İsim ile Ara
+                            </label>
+                            <input
+                                type="text"
+                                id="searchName"
+                                placeholder="İsim giriniz..."
+                                value="${this.searchName}"
+                                oninput="UsersPage.handleSearchName(this.value)"
+                                class="w-full px-4 py-2 rounded-lg"
+                            >
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-700 mb-2" style="display: block;">
+                                Telefon ile Ara
+                            </label>
+                            <input
+                                type="text"
+                                id="searchPhone"
+                                placeholder="Telefon numarası giriniz..."
+                                value="${this.searchPhone}"
+                                oninput="UsersPage.handleSearchPhone(this.value)"
+                                class="w-full px-4 py-2 rounded-lg"
+                            >
+                        </div>
+                    </div>
                 </div>
                 <div class="overflow-x-auto">
                     <table>
@@ -33,12 +71,37 @@ const UsersPage = {
                             </tr>
                         </thead>
                         <tbody>
-                            ${users.map(user => this.renderUserRow(user)).join('')}
+                            ${filteredUsers.length > 0 
+                                ? filteredUsers.map(user => this.renderUserRow(user)).join('') 
+                                : '<tr><td colspan="8" class="text-center py-8 text-gray-500">Arama sonucu bulunamadı</td></tr>'
+                            }
                         </tbody>
                     </table>
                 </div>
             </div>
         `;
+    },
+
+    filterUsers(users) {
+        return users.filter(user => {
+            const nameMatch = this.searchName === '' || 
+                user.name.toLowerCase().includes(this.searchName.toLowerCase());
+            
+            const phoneMatch = this.searchPhone === '' || 
+                user.phone.includes(this.searchPhone);
+            
+            return nameMatch && phoneMatch;
+        });
+    },
+
+    handleSearchName(value) {
+        this.searchName = value;
+        State.notify();
+    },
+
+    handleSearchPhone(value) {
+        this.searchPhone = value;
+        State.notify();
     },
 
     renderUserRow(user) {
