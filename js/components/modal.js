@@ -1,9 +1,24 @@
 // Modal Component
 const Modal = {
+    customModalHtml: '',
+    isCustomModalOpen: false,
+
     render() {
         const state = State.get();
         const modal = state.deleteModal;
         
+        // Custom modal (for prayer limits)
+        if (this.isCustomModalOpen) {
+            return `
+                <div class="modal" onclick="Modal.handleCustomBackdropClick(event)">
+                    <div class="modal-content">
+                        ${this.customModalHtml}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Delete modal
         if (!modal.show) {
             return '';
         }
@@ -46,9 +61,41 @@ const Modal = {
         `;
     },
 
+    // Show custom modal
+    show(html) {
+        this.customModalHtml = html;
+        this.isCustomModalOpen = true;
+        this.renderModal();
+    },
+
+    // Hide custom modal
+    hide() {
+        this.customModalHtml = '';
+        this.isCustomModalOpen = false;
+        this.renderModal();
+    },
+
+    // Render modal in the page
+    renderModal() {
+        const modalContainer = document.getElementById('modal-container');
+        if (modalContainer) {
+            modalContainer.innerHTML = this.render();
+        } else {
+            // If container doesn't exist, trigger full app render
+            const state = State.get();
+            State.setState(state);
+        }
+    },
+
     handleBackdropClick(event) {
         if (event.target.classList.contains('modal')) {
             State.hideDeleteModal();
+        }
+    },
+
+    handleCustomBackdropClick(event) {
+        if (event.target.classList.contains('modal')) {
+            this.hide();
         }
     },
 
