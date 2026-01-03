@@ -108,7 +108,21 @@ const API = {
             method: 'POST',
             body: JSON.stringify({ title, message })
         });
-    }
+    },
+    // Prayer Limits
+    async addPrayerLimitsToAll(amount) {
+        return await this.request(CONFIG.ENDPOINTS.ADD_PRAYER_LIMITS_ALL, {
+            method: 'POST',
+            body: JSON.stringify({ amount })
+        });
+    },
+
+    async addPrayerLimitsToUser(userId, amount) {
+        return await this.request(`${CONFIG.ENDPOINTS.ADD_PRAYER_LIMITS_USER}/${userId}`, {
+            method: 'POST',
+            body: JSON.stringify({ amount })
+        });
+    },
 };
 
 // Export for use in other modules

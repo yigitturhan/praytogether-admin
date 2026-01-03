@@ -16,7 +16,9 @@ const CONFIG = {
         USERS: '/admin/users',
         PRAYERS: '/admin/prayers',
         REPORTS: '/admin/reports',
-        SEND_NOTIFICATION: '/admin/send-notification'
+        SEND_NOTIFICATION: '/admin/send-notification',
+        ADD_PRAYER_LIMITS_ALL: '/admin/add-prayer-limits-all',
+        ADD_PRAYER_LIMITS_USER: '/admin/add-prayer-limits-user'
     },
     
     // Status Labels
