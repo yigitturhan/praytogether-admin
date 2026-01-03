@@ -28,7 +28,7 @@ const UsersPage = {
                         <!-- Add Prayer Limits to All Button -->
                         <button
                             onclick="UsersPage.showAddPrayerLimitsAllDialog()"
-                            class="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all duration-200"
+                            class="px-4 py-2 bg-gradient-to-r from-purple-700 to-indigo-700 text-white rounded-lg font-semibold shadow-md hover:from-purple-800 hover:to-indigo-800 transition-all duration-200"
                             title="Tüm Kullanıcılara Dua Hakkı Ekle"
                         >
                             ✨ Tüm Kullanıcılara Dua Hakkı Ekle
@@ -168,7 +168,7 @@ const UsersPage = {
                         <!-- Prayer Limits Button -->
                         <button
                             onclick="UsersPage.showAddPrayerLimitsDialog('${user.id}', '${Utils.escapeHtml(user.name)}')"
-                            class="px-3 py-1 bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-700 rounded-lg text-sm font-medium hover:from-purple-200 hover:to-indigo-200 transition-all"
+                            class="px-3 py-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg text-sm font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all shadow-sm"
                             title="Dua Hakkı Ekle"
                         >
                             ✨ Dua Hakkı Ekle
